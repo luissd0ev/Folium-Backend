@@ -234,6 +234,61 @@ service cloud.firestore {
 - Revisar que el userId es correcto
 - Comprobar logs del servidor
 
+## Despliegue
+
+### Configuración de Git (IMPORTANTE)
+Antes de hacer commits, asegúrate de que el autor de Git esté configurado correctamente:
+
+```bash
+git config user.email "luisjrcrash@gmail.com"
+git config user.name "luissd0ev"
+```
+
+**CRÍTICO**: Vercel verifica el autor de los commits. Si el email no coincide con el propietario del proyecto en Vercel, el despliegue fallará con:
+```
+Error: Git author [email] must have access to the team [owner]'s projects on Vercel
+```
+
+Si esto ocurre, corregir con:
+```bash
+git commit --amend --reset-author --no-edit
+git push --force
+vercel --prod
+```
+
+### CORS en Producción
+El backend en Vercel debe permitir estos orígenes en `server.js`:
+
+```javascript
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://fb-crud-react-e2a5f.web.app',
+    'https://fb-crud-react-e2a5f.firebaseapp.com',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
+  credentials: true,
+}));
+```
+
+**Nota**: Firebase Hosting sirve en dos dominios (.web.app y .firebaseapp.com), ambos deben estar permitidos.
+
+### Despliegue en Vercel
+
+**Producción**:
+```bash
+vercel --prod
+```
+
+**Variables de Entorno** (ya configuradas):
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+- `FRONTEND_URL` → `https://fb-crud-react-e2a5f.web.app`
+
+**URL de Producción**: https://notes-app-backend-teal.vercel.app
+
 ## Notas Importantes
 
 - Este backend usa Firebase Admin SDK, NO el SDK web
@@ -241,3 +296,4 @@ service cloud.firestore {
 - El backend necesita Service Account credentials (private key)
 - Por ahora usamos un usuario de prueba hardcodeado
 - La estructura está preparada para múltiples usuarios
+- **SIEMPRE verificar el autor de Git antes de hacer commits y desplegar**
