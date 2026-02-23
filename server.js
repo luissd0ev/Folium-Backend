@@ -19,6 +19,8 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'http://localhost:5174',
+    'https://fb-crud-react-e2a5f.web.app',
+    'https://fb-crud-react-e2a5f.firebaseapp.com',
     process.env.FRONTEND_URL
   ].filter(Boolean),
   credentials: true,
